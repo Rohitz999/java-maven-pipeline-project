@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Clone Git Repo') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Rohitz999/java-maven-pipeline-project.git'
+            }
+        }
+
+        stage('Build WAR') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Copy WAR to Server') {
+            steps {
+                sshagent(credentials: ['test']) {
+                    sh '''
+                    scp -o StrictHostKeyChecking=no \
+                    target/java-app.war \
+                    ubuntu@16.170.15.128:/tmp/
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                sshagent(credentials: ['test']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no \
+                    ubuntu@16.170.15.128 \
+                    "sudo cp /tmp/java-app.war /opt/tomcat-9.0.11/webapps/"
+                    '''
+                }
+            }
+        }
+    }
+}
