@@ -22,7 +22,7 @@ pipeline {
                     sh '''
                     scp -o StrictHostKeyChecking=no \
                     target/java-app.war \
-                    ubuntu@16.170.15.128:/tmp/
+                    ubuntu@13.48.203.90:/tmp/
                     '''
                 }
             }
@@ -33,7 +33,7 @@ pipeline {
                 sshagent(credentials: ['test']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no \
-                    ubuntu@16.170.15.128 \
+                    ubuntu@13.48.203.90 \
                     "sudo cp /tmp/java-app.war /opt/tomcat-9.0.11/webapps/"
                     '''
                 }
